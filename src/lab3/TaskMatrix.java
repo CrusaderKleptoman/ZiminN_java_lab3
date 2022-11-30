@@ -32,9 +32,9 @@ public class TaskMatrix {
 
     public void setElemMatrix(int elemMatrix, int rows, int columns) {this.matrix[rows][columns] = elemMatrix;}
 
-    private int getRowsAmount(){return matrix.length;}
-    private int getColumnsAmount(int n){return matrix[n].length;}
-    private int getElem(int n, int m){return matrix[n][m];}
+    public int getRowsAmount(){return matrix.length;}
+    public int getColumnsAmount(int n){return matrix[n].length;}
+    public int getElem(int n, int m){return matrix[n][m];}
 
     public void setRandomMatrix()
     {
