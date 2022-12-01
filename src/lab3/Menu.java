@@ -1,6 +1,9 @@
 package lab3;
 
+import com.sun.org.apache.xerces.internal.impl.io.UTF8Reader;
+
 import java.io.*;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Menu {
@@ -86,6 +89,8 @@ public class Menu {
 
     private static void InputMatrixMenu() {
         int command = -1;
+        String fileMatrix = "fileMatrix.txt";
+        String fileMatrixBinary = "fileMatrixBinary.bin";
         int n;
         int m;
         do {
@@ -120,10 +125,46 @@ public class Menu {
                     }
                     break;
                 case 3:
+                    try(FileReader fileReader = new FileReader(fileMatrix))
+                    {
+                        StringBuffer stringBufferMatrix = new StringBuffer("");
+                        int matrixInFile;
+                        while((matrixInFile = fileReader.read()) != 32)
+                        {
+                            stringBufferMatrix.append((char)matrixInFile);
+                        }
+                        n = Integer.parseInt(stringBufferMatrix.toString());
+                        stringBufferMatrix.setLength(0);
 
+                        while((matrixInFile = fileReader.read()) != 32)
+                        {
+                            stringBufferMatrix.append((char)matrixInFile);
+                        }
+                        m = Integer.parseInt(stringBufferMatrix.toString());
+                        stringBufferMatrix.setLength(0);
+
+                        taskMatrix = new TaskMatrix(n, m);
+
+                        for (int i = 0; i < n; i++) {
+                            for (int j = 0; j < m; j++) {
+                                while((matrixInFile = fileReader.read()) != 32)
+                                {
+                                    stringBufferMatrix.append((char)matrixInFile);
+                                }
+
+                                taskMatrix.setElemMatrix(Integer.parseInt(stringBufferMatrix.toString()), i, j);
+                                stringBufferMatrix.setLength(0);
+                            }
+                        }
+
+                    }
+                    catch (IOException ioException)
+                    {
+                        System.out.println("Ошибка");
+                    }
                     break;
                 case 4:
-                    try(DataInputStream dataInputStream = new DataInputStream(new FileInputStream("fileMatrix.txt")))
+                    try(DataInputStream dataInputStream = new DataInputStream(new FileInputStream(fileMatrixBinary)))
                     {
                         n = dataInputStream.readInt();
                         m = dataInputStream.readInt();
@@ -145,7 +186,6 @@ public class Menu {
                         System.out.println(ex.getMessage());
                     }
 
-
                     break;
                 case 0:
                     break;
@@ -158,7 +198,8 @@ public class Menu {
 
     private static void SaveMatrixMenu() {
         int command = -1;
-        String fileName = "fileMatrix.txt";
+        String fileMatrix = "fileMatrix.txt";
+        String fileMatrixBinary = "fileMatrixBinary.bin";
         do {
             System.out.println("_______________________________________________________________");
             System.out.println("Меню сохранения матрицы в файл");
@@ -174,7 +215,7 @@ public class Menu {
 
                     break;
                 case 2:
-                    try (DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(fileName)))
+                    try (DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(fileMatrixBinary)))
                     {
                         dataOutputStream.writeInt(taskMatrix.getRowsAmount());
                         dataOutputStream.writeInt(taskMatrix.getColumnsAmount(0));
@@ -190,7 +231,7 @@ public class Menu {
                     }
                     break;
                 case 3:
-                    try (FileWriter fileWriter = new FileWriter(fileName, false)){
+                    try (FileWriter fileWriter = new FileWriter(fileMatrix, false)){
                         fileWriter.write(Integer.toString(taskMatrix.getRowsAmount()));
                         fileWriter.write(" ");
                         fileWriter.write(Integer.toString(taskMatrix.getColumnsAmount(0)));
@@ -327,33 +368,33 @@ public class Menu {
     {
         int command = -1;
         String fileText = "fileText.txt";
+        String fileTextBinary = "fileTextBinary.bin";
+        StringBuffer stringBufferText;
         do {
             System.out.println("_______________________________________________________________");
             System.out.println("1 - ввести текст через консоль");
             System.out.println("2 - прочитать текст из файла");
             System.out.println("3 - прочитать текст из бинарного файла");
-            System.out.println("0 - вернуться в меню работы с матрицей");
+            System.out.println("0 - вернуться в меню работы с текстом");
 
             command = readCommand();
 
             switch (command){
                 case 1:
                     Scanner scanner = new Scanner(System.in);
-                    //scanner.nextLine();
                     String text = scanner.nextLine();
                     taskText = new TaskText(text);
                     break;
                 case 2:
                     try(FileReader fileReader = new FileReader(fileText))
                     {
-                        StringBuffer stringBufferText = new StringBuffer("");
+                        stringBufferText = new StringBuffer("");
                         int symbolInText;
                         while((symbolInText = fileReader.read()) != -1)
                         {
                             stringBufferText.append((char)symbolInText);
                         }
                         taskText = new TaskText(stringBufferText.toString());
-
                     }
                     catch (IOException ioException)
                     {
@@ -361,7 +402,24 @@ public class Menu {
                     }
                     break;
                 case 3:
+                    try(DataInputStream dataInputStream = new DataInputStream(new FileInputStream(fileTextBinary)))
+                    {
+                        String textInFile = dataInputStream.readUTF();
+                        stringBufferText = new StringBuffer("");
+                        while(!textInFile.isEmpty())
+                        {
+                            stringBufferText.append(textInFile);
+                            textInFile = dataInputStream.readUTF();
+                        }
 
+                        taskText = new TaskText(stringBufferText.toString());
+
+
+                    }
+                    catch (IOException ioException)
+                    {
+                        System.out.println("Ошибка");
+                    }
                     break;
                 case 0:
                     break;
@@ -372,18 +430,19 @@ public class Menu {
         } while(command != 0);
     }
 
-
     private static void SaveTextMenu()
     {
         String fileText = "fileText.txt";
+        String fileTextBinary = "fileTextBinary.bin";
+        String[] outputText;
         int command = -1;
         do {
             System.out.println("_______________________________________________________________");
-            System.out.println("Меню сохранения матрицы в файл");
+            System.out.println("Меню сохранения текста в файл");
             System.out.println("1 - задать название файла");
             System.out.println("2 - сохранить в бинарный файл");
             System.out.println("3 - сохранить в обычный текстовый файл");
-            System.out.println("0 - вернуться в меню работы с матрицей");
+            System.out.println("0 - вернуться в меню работы с текстом");
 
             command = readCommand();
 
@@ -392,9 +451,22 @@ public class Menu {
 
                     break;
                 case 2:
+                    outputText = taskText.getText();
+                    try(DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(fileTextBinary)))
+                    {
+                        for (int i = 0; i < outputText.length; i++) {
+                            dataOutputStream.writeUTF(outputText[i]);
+                            dataOutputStream.writeUTF(" ");
+                        }
+
+                    }
+                    catch (IOException ioException)
+                    {
+                        System.out.println("Ошибка");
+                    }
                     break;
                 case 3:
-                    String[] outputText = taskText.getText();
+                    outputText = taskText.getText();
                     try(FileWriter fileWriter = new FileWriter(fileText, false))
                     {
                         for (int i = 0; i < outputText.length; i++) {
@@ -408,9 +480,6 @@ public class Menu {
                     {
                         System.out.println("Ошибка");
                     }
-                    break;
-                case 4:
-
                     break;
                 case 0:
                     break;
@@ -429,7 +498,7 @@ public class Menu {
             System.out.println("1 - вывести условие задачи");
             System.out.println("2 - выполнить задачу");
             System.out.println("3 - вывести текст в консоль");
-            System.out.println("0 - вернуться в меню работы с матрицей");
+            System.out.println("0 - вернуться в меню работы с текстом");
 
             command = readCommand();
 
