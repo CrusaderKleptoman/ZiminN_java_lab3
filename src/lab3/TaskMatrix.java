@@ -50,7 +50,7 @@ public class TaskMatrix {
 
     public void writeMatrix()
     {
-        int elementAmount = 1;
+        int elementAmount = 0;
         int maxColumns = 0;
         for (int i = 0; i < getRowsAmount(); i++) {
             for (int j = 0; j < getColumnsAmount(i); j++) {

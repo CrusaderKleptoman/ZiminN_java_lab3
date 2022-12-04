@@ -1,9 +1,6 @@
 package lab3;
 
-import com.sun.org.apache.xerces.internal.impl.io.UTF8Reader;
-
 import java.io.*;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Menu {
@@ -17,7 +14,7 @@ public class Menu {
         try {
             command = Integer.parseInt(scanner.nextLine());
         } catch (NumberFormatException exception) {
-            System.out.println("Неправильный формат команды, повторите ввод");
+            System.out.println("Неверное значение команды, повторите ввод");
             command = readCommand();
         }
         return command;
@@ -43,7 +40,7 @@ public class Menu {
                 case 0:
                     break;
                 default:
-                    System.out.println("Неверная команда, повторите ввод");
+                    System.out.println("Команды нет в списке, повторите ввод");
             }
 
         } while (command != 0);
@@ -81,7 +78,7 @@ public class Menu {
                 case 0:
                     break;
                 default:
-                    System.out.println("Неверная команда, повторите ввод");
+                    System.out.println("Команды нет в списке, повторите ввод");
             }
 
         } while (command != 0);
@@ -94,6 +91,7 @@ public class Menu {
         int n;
         int m;
         do {
+            n = 0; m = 0;
             System.out.println("_______________________________________________________________");
             System.out.println("1 - задать матрицу случайно, предел значений ячеек, числа строк и слобцов = [1; 100]");
             System.out.println("2 - ввести матрицу через консоль");
@@ -109,20 +107,40 @@ public class Menu {
                     taskMatrix.setRandomMatrix();
                     break;
                 case 2:
-                    System.out.println("Введите число строк");
-                    Scanner scanner = new Scanner(System.in);
-                    n = Integer.parseInt(scanner.nextLine());
+                    try {
+                        System.out.println("Введите число строк");
+                        Scanner scanner = new Scanner(System.in);
+                        while (n <= 0) {
+                            n = Integer.parseInt(scanner.nextLine());
+                            if (n <= 0) {
+                                System.out.println("Число строк не может быть меньше или равно 0, повторите ввод");
+                                break;
+                            }
+                        }
 
-                    System.out.println("Введите число столбцов");
-                    m = Integer.parseInt(scanner.nextLine());
-                    taskMatrix = new TaskMatrix(n, m);
+                        System.out.println("Введите число столбцов");
+                        while (m <= 0) {
 
-                    System.out.println("Введите элементы матрицы");
-                    for (int i = 0; i < n; i++) {
-                        for (int j = 0; j < m; j++) {
-                            taskMatrix.setElemMatrix(Integer.parseInt(scanner.nextLine()), i, j);
+                            m = Integer.parseInt(scanner.nextLine());
+                            if (m <= 0) {
+                                System.out.println("Число столбцов не может быть меньше или равно 0, повторите ввод");
+                                break;
+                            }
+                        }
+
+                        taskMatrix = new TaskMatrix(n, m);
+                        System.out.println("Введите элементы матрицы");
+                        for (int i = 0; i < n; i++) {
+                            for (int j = 0; j < m; j++) {
+                                taskMatrix.setElemMatrix(Integer.parseInt(scanner.nextLine()), i, j);
+                            }
                         }
                     }
+                    catch (NumberFormatException exception)
+                {
+                    System.out.println("Неверный формат введённых данных, возвращение в меню \n");
+                }
+
                     break;
                 case 3:
                     try(FileReader fileReader = new FileReader(fileMatrix))
@@ -134,6 +152,8 @@ public class Menu {
                             stringBufferMatrix.append((char)matrixInFile);
                         }
                         n = Integer.parseInt(stringBufferMatrix.toString());
+
+
                         stringBufferMatrix.setLength(0);
 
                         while((matrixInFile = fileReader.read()) != 32)
@@ -141,13 +161,14 @@ public class Menu {
                             stringBufferMatrix.append((char)matrixInFile);
                         }
                         m = Integer.parseInt(stringBufferMatrix.toString());
+
                         stringBufferMatrix.setLength(0);
 
                         taskMatrix = new TaskMatrix(n, m);
 
                         for (int i = 0; i < n; i++) {
                             for (int j = 0; j < m; j++) {
-                                while((matrixInFile = fileReader.read()) != 32)
+                                while((matrixInFile = fileReader.read()) != 32 && matrixInFile != -1)
                                 {
                                     stringBufferMatrix.append((char)matrixInFile);
                                 }
@@ -158,10 +179,23 @@ public class Menu {
                         }
 
                     }
-                    catch (IOException ioException)
+
+                    catch (FileNotFoundException exception)
                     {
-                        System.out.println("Ошибка");
+                        System.out.println("Файл с данными отсутствует, возвращение в меню \n");
                     }
+                    catch (NumberFormatException exception)
+                    {
+                        System.out.println("Неверный формат данных в файле или внезапный конец файла, невозможно заполнение матрицы, возвращение в меню \n");
+                    }
+                    catch (NegativeArraySizeException exception)
+                    {
+                        System.out.println("Число строк или столбцов, указанное в файле, меньше 0, невозможно создание матрицы, возвращение в меню \n");
+                    }
+                    catch (IOException e) {
+                        System.out.println("Неизвестная ошибка");
+                    }
+
                     break;
                 case 4:
                     try(DataInputStream dataInputStream = new DataInputStream(new FileInputStream(fileMatrixBinary)))
@@ -179,18 +213,26 @@ public class Menu {
                     }
                     catch (FileNotFoundException exception)
                     {
-                        System.out.printf("Файл не найден \n");
+                        System.out.println("Файл с данными отсутствует, возвращение в меню \n");
                     }
-                    catch(IOException ex){
+                    catch (NumberFormatException exception)
+                    {
+                        System.out.println("Неверный формат данных в файле или внезапный конец файла, невозможно заполнение матрицы, возвращение в меню \n");
+                    }
+                    catch (NegativeArraySizeException exception)
+                    {
+                        System.out.println("Число строк или столбцов, указанное в файле, меньше 0, невозможно создание матрицы, возвращение в меню \n");
+                    }
 
-                        System.out.println(ex.getMessage());
+                    catch (IOException e) {
+                        System.out.println("Неизвестная ошибка");
                     }
 
                     break;
                 case 0:
                     break;
                 default:
-                    System.out.println("Неверная команда, повторите ввод");
+                    System.out.println("Команды нет в списке, повторите ввод");
             }
 
         } while (command != 0);
@@ -203,18 +245,14 @@ public class Menu {
         do {
             System.out.println("_______________________________________________________________");
             System.out.println("Меню сохранения матрицы в файл");
-            System.out.println("1 - задать название файла");
-            System.out.println("2 - сохранить в бинарный файл");
-            System.out.println("3 - сохранить в обычный текстовый файл");
+            System.out.println("1 - сохранить в бинарный файл");
+            System.out.println("2 - сохранить в обычный текстовый файл");
             System.out.println("0 - вернуться в меню работы с матрицей");
 
             command = readCommand();
 
             switch (command) {
                 case 1:
-
-                    break;
-                case 2:
                     try (DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(fileMatrixBinary)))
                     {
                         dataOutputStream.writeInt(taskMatrix.getRowsAmount());
@@ -225,39 +263,43 @@ public class Menu {
                             }
                         }
                     }
+                    catch (NullPointerException exception)
+                    {
+                        System.out.println("Матрица ещё не была введена, перейдите в меню ввода матрицы и задайте матрицу");
+                    }
                     catch (IOException ex)
                     {
-                        System.out.println("Ошибка");
+                        System.out.println("Неизвестная ошибка");
                     }
                     break;
-                case 3:
+                case 2:
                     try (FileWriter fileWriter = new FileWriter(fileMatrix, false)){
                         fileWriter.write(Integer.toString(taskMatrix.getRowsAmount()));
                         fileWriter.write(" ");
                         fileWriter.write(Integer.toString(taskMatrix.getColumnsAmount(0)));
-                        fileWriter.write(" ");
 
                         for (int i = 0; i < taskMatrix.getRowsAmount(); i++) {
                             for (int j = 0; j < taskMatrix.getColumnsAmount(i); j++) {
-                                fileWriter.write(Integer.toString(taskMatrix.getElem(i, j)));
                                 fileWriter.write(" ");
+                                fileWriter.write(Integer.toString(taskMatrix.getElem(i, j)));
                             }
                         }
                         fileWriter.flush();
                     }
+                    catch (NullPointerException exception)
+                    {
+                        System.out.println("Матрица ещё не была введена, перейдите в меню ввода матрицы и задайте матрицу");
+                    }
                     catch (IOException ex)
                     {
-                        System.out.println("Ошибка");
+                        System.out.println("Неизвестная ошибка");
                     }
-
-                    break;
-                case 4:
 
                     break;
                 case 0:
                     break;
                 default:
-                    System.out.println("Неверная команда, повторите ввод");
+                    System.out.println("Команды нет в списке, повторите ввод");
             }
 
         } while (command != 0);
@@ -316,7 +358,7 @@ public class Menu {
                 case 0:
                     break;
                 default:
-                    System.out.println("Неверная команда, повторите ввод");
+                    System.out.println("Команды нет в списке, повторите ввод");
             }
 
         } while (command != 0);
@@ -358,7 +400,7 @@ public class Menu {
                 case 0:
                     break;
                 default:
-                    System.out.println("Неверная команда, повторите ввод");
+                    System.out.println("Команды нет в списке, повторите ввод");
             }
 
         } while (command != 0);
@@ -396,11 +438,17 @@ public class Menu {
                         }
                         taskText = new TaskText(stringBufferText.toString());
                     }
+
+                    catch (FileNotFoundException exception)
+                    {
+                        System.out.println("Файл с данными отсутствует, возвращение в меню \n");
+                    }
                     catch (IOException ioException)
                     {
-                        System.out.println("Ошибка");
+                        System.out.println("Неизвестная ошибка");
                     }
                     break;
+
                 case 3:
                     try(DataInputStream dataInputStream = new DataInputStream(new FileInputStream(fileTextBinary)))
                     {
@@ -416,15 +464,20 @@ public class Menu {
 
 
                     }
+
+                    catch (FileNotFoundException exception)
+                    {
+                        System.out.println("Файл с данными отсутствует, возвращение в меню \n");
+                    }
                     catch (IOException ioException)
                     {
-                        System.out.println("Ошибка");
+                        System.out.println("Неизвестная ошибка");
                     }
                     break;
                 case 0:
                     break;
                 default:
-                    System.out.println("Неверная команда, повторите ввод");
+                    System.out.println("Команды нет в списке, повторите ввод");
             }
 
         } while(command != 0);
@@ -439,7 +492,6 @@ public class Menu {
         do {
             System.out.println("_______________________________________________________________");
             System.out.println("Меню сохранения текста в файл");
-            System.out.println("1 - задать название файла");
             System.out.println("2 - сохранить в бинарный файл");
             System.out.println("3 - сохранить в обычный текстовый файл");
             System.out.println("0 - вернуться в меню работы с текстом");
@@ -448,27 +500,28 @@ public class Menu {
 
             switch (command){
                 case 1:
-
-                    break;
-                case 2:
-                    outputText = taskText.getText();
                     try(DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(fileTextBinary)))
                     {
+                        outputText = taskText.getText();
                         for (int i = 0; i < outputText.length; i++) {
                             dataOutputStream.writeUTF(outputText[i]);
                             dataOutputStream.writeUTF(" ");
                         }
 
                     }
+                    catch (NullPointerException exception)
+                    {
+                        System.out.println("Текст ещё не был введён, перейдите в меню ввода текста и задайте текст");
+                    }
                     catch (IOException ioException)
                     {
-                        System.out.println("Ошибка");
+                        System.out.println("Неизвестная ошибка");
                     }
                     break;
-                case 3:
-                    outputText = taskText.getText();
+                case 2:
                     try(FileWriter fileWriter = new FileWriter(fileText, false))
                     {
+                        outputText = taskText.getText();
                         for (int i = 0; i < outputText.length; i++) {
                             fileWriter.write(outputText[i]);
                             fileWriter.write(" ");
@@ -476,15 +529,19 @@ public class Menu {
 
                         fileWriter.flush();
                     }
+                    catch (NullPointerException exception)
+                    {
+                        System.out.println("Текст ещё не был введён, перейдите в меню ввода текста и задайте текст");
+                    }
                     catch (IOException ioException)
                     {
-                        System.out.println("Ошибка");
+                        System.out.println("Неизвестная ошибка");
                     }
                     break;
                 case 0:
                     break;
                 default:
-                    System.out.println("Неверная команда, повторите ввод");
+                    System.out.println("Команды нет в списке, повторите ввод");
             }
 
         } while(command != 0);
@@ -528,7 +585,7 @@ public class Menu {
                 case 0:
                     break;
                 default:
-                    System.out.println("Неверная команда, повторите ввод");
+                    System.out.println("Команды нет в списке, повторите ввод");
             }
 
         } while(command != 0);
