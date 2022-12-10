@@ -3,17 +3,17 @@ package lab3;
 public class TaskText {
     private String[] text;
 
-    TaskText()
+    public TaskText()
     {
         this.text = new String[1]; this.text[0] = "";
     }
 
-    TaskText(TaskText taskText)
+    public TaskText(TaskText taskText)
     {
         this.text = taskText.getText();
     }
 
-    TaskText(String[] text)
+    public TaskText(String[] text)
     {
         this.text = new String[text.length + 1];
         for (int i = 0; i < text.length; i++) {
@@ -21,7 +21,7 @@ public class TaskText {
         }
     }
 
-    TaskText(String text)
+    public TaskText(String text)
     {
         int spaceCount = 0;
         for (int i = 0; i < text.length(); i++) {
