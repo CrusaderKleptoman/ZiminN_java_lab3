@@ -86,6 +86,7 @@ public class Menu {
 
     private static void InputMatrixMenu() {
         int command = -1;
+        Scanner scanner = new Scanner(System.in);
         String fileMatrix = "fileMatrix.txt";
         String fileMatrixBinary = "fileMatrixBinary.bin";
         int n;
@@ -109,22 +110,18 @@ public class Menu {
                 case 2:
                     try {
                         System.out.println("Введите число строк");
-                        Scanner scanner = new Scanner(System.in);
                         while (n <= 0) {
                             n = Integer.parseInt(scanner.nextLine());
                             if (n <= 0) {
                                 System.out.println("Число строк не может быть меньше или равно 0, повторите ввод");
-                                break;
                             }
                         }
 
                         System.out.println("Введите число столбцов");
                         while (m <= 0) {
-
                             m = Integer.parseInt(scanner.nextLine());
                             if (m <= 0) {
                                 System.out.println("Число столбцов не может быть меньше или равно 0, повторите ввод");
-                                break;
                             }
                         }
 
@@ -143,6 +140,12 @@ public class Menu {
 
                     break;
                 case 3:
+                    System.out.println("Введите название файла формата txt. Если хотите прочитать из файла по умолчанию(fileMatrix.txt) нажмите Enter");
+                    String fileMatrixName = scanner.nextLine();
+                    if (!fileMatrixName.isEmpty())
+                    {
+                        fileMatrix = fileMatrixName;
+                    }
                     try(FileReader fileReader = new FileReader(fileMatrix))
                     {
                         StringBuffer stringBufferMatrix = new StringBuffer("");
@@ -178,6 +181,8 @@ public class Menu {
                             }
                         }
 
+                        System.out.println("Матрица успешно задана и заполнена");
+
                     }
 
                     catch (FileNotFoundException exception)
@@ -186,7 +191,7 @@ public class Menu {
                     }
                     catch (NumberFormatException exception)
                     {
-                        System.out.println("Неверный формат данных в файле или внезапный конец файла, невозможно заполнение матрицы, возвращение в меню \n");
+                        System.out.println("Неверный формат данных в файле или внезапный конец файла, невозможно полное заполнение матрицы, возвращение в меню \n");
                     }
                     catch (NegativeArraySizeException exception)
                     {
@@ -198,6 +203,12 @@ public class Menu {
 
                     break;
                 case 4:
+                    System.out.println("Введите название файла формата bin. Если хотите прочитать из файла по умолчанию(fileMatrixBinaryName.bin) нажмите Enter");
+                    String fileMatrixBinaryName = scanner.nextLine();
+                    if (!fileMatrixBinaryName.isEmpty())
+                    {
+                        fileMatrix = fileMatrixBinaryName;
+                    }
                     try(DataInputStream dataInputStream = new DataInputStream(new FileInputStream(fileMatrixBinary)))
                     {
                         n = dataInputStream.readInt();
@@ -210,6 +221,7 @@ public class Menu {
                             }
                         }
 
+                        System.out.println("Матрица успешно задана и заполнена");
                     }
                     catch (FileNotFoundException exception)
                     {
@@ -240,6 +252,7 @@ public class Menu {
 
     private static void SaveMatrixMenu() {
         int command = -1;
+        Scanner scanner = new Scanner(System.in);
         String fileMatrix = "fileMatrix.txt";
         String fileMatrixBinary = "fileMatrixBinary.bin";
         do {
@@ -253,6 +266,12 @@ public class Menu {
 
             switch (command) {
                 case 1:
+                    System.out.println("Введите название файла формата bin. Если хотите сохранить в файл по умолчанию(fileMatrixBinaryName.bin) нажмите Enter");
+                    String fileMatrixBinaryName = scanner.nextLine();
+                    if (!fileMatrixBinaryName.isEmpty())
+                    {
+                        fileMatrix = fileMatrixBinaryName;
+                    }
                     try (DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(fileMatrixBinary)))
                     {
                         dataOutputStream.writeInt(taskMatrix.getRowsAmount());
@@ -273,6 +292,12 @@ public class Menu {
                     }
                     break;
                 case 2:
+                    System.out.println("Введите название файла формата txt. Если хотите сохранить в файл по умолчанию(fileMatrix.txt) нажмите Enter");
+                    String fileMatrixName = scanner.nextLine();
+                    if (!fileMatrixName.isEmpty())
+                    {
+                        fileMatrix = fileMatrixName;
+                    }
                     try (FileWriter fileWriter = new FileWriter(fileMatrix, false)){
                         fileWriter.write(Integer.toString(taskMatrix.getRowsAmount()));
                         fileWriter.write(" ");
@@ -409,6 +434,7 @@ public class Menu {
     private static void InputTextMenu()
     {
         int command = -1;
+        Scanner scanner = new Scanner(System.in);
         String fileText = "fileText.txt";
         String fileTextBinary = "fileTextBinary.bin";
         StringBuffer stringBufferText;
@@ -423,11 +449,16 @@ public class Menu {
 
             switch (command){
                 case 1:
-                    Scanner scanner = new Scanner(System.in);
                     String text = scanner.nextLine();
                     taskText = new TaskText(text);
                     break;
                 case 2:
+                    System.out.println("Введите название файла формата txt. Если хотите прочитать из файла по умолчанию(fileText.txt) нажмите Enter");
+                    String fileTextName = scanner.nextLine();
+                    if (!fileTextName.isEmpty())
+                    {
+                        fileText = fileTextName;
+                    }
                     try(FileReader fileReader = new FileReader(fileText))
                     {
                         stringBufferText = new StringBuffer("");
@@ -450,6 +481,12 @@ public class Menu {
                     break;
 
                 case 3:
+                    System.out.println("Введите название файла формата bin. Если хотите прочитать из файла по умолчанию(fileTextBinaryName.bin) нажмите Enter");
+                    String fileTextBinaryName = scanner.nextLine();
+                    if (!fileTextBinaryName.isEmpty())
+                    {
+                        fileText = fileTextBinaryName;
+                    }
                     try(DataInputStream dataInputStream = new DataInputStream(new FileInputStream(fileTextBinary)))
                     {
                         String textInFile = dataInputStream.readUTF();
@@ -485,6 +522,7 @@ public class Menu {
 
     private static void SaveTextMenu()
     {
+        Scanner scanner = new Scanner(System.in);
         String fileText = "fileText.txt";
         String fileTextBinary = "fileTextBinary.bin";
         String[] outputText;
@@ -500,6 +538,12 @@ public class Menu {
 
             switch (command){
                 case 1:
+                    System.out.println("Введите название файла формата bin. Если хотите прочитать из файла по умолчанию(fileTextBinaryName.bin) нажмите Enter");
+                    String fileTextBinaryName = scanner.nextLine();
+                    if (!fileTextBinaryName.isEmpty())
+                    {
+                        fileText = fileTextBinaryName;
+                    }
                     try(DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(fileTextBinary)))
                     {
                         outputText = taskText.getText();
@@ -519,6 +563,12 @@ public class Menu {
                     }
                     break;
                 case 2:
+                    System.out.println("Введите название файла формата txt. Если хотите прочитать из файла по умолчанию(fileText.txt) нажмите Enter");
+                    String fileTextName = scanner.nextLine();
+                    if (!fileTextName.isEmpty())
+                    {
+                        fileText = fileTextName;
+                    }
                     try(FileWriter fileWriter = new FileWriter(fileText, false))
                     {
                         outputText = taskText.getText();
