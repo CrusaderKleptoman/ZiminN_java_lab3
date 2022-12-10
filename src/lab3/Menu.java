@@ -94,7 +94,8 @@ public class Menu {
         do {
             n = 0; m = 0;
             System.out.println("_______________________________________________________________");
-            System.out.println("1 - задать матрицу случайно, предел значений ячеек, числа строк и слобцов = [1; 100]");
+            System.out.println("Меню ввода матрицы");
+            System.out.println("1 - задать матрицу случайно, предел значений ячеек = [1; 100], числа строк и слобцов = [0; 100]");
             System.out.println("2 - ввести матрицу через консоль");
             System.out.println("3 - прочитать матрицу из файла");
             System.out.println("4 - прочитать матрицу из бинарного файла");
@@ -334,6 +335,7 @@ public class Menu {
         int command = -1;
         do {
             System.out.println("_______________________________________________________________");
+            System.out.println("Меню работы с задачами матрицы");
             System.out.println("1 - вывести условия задач");
             System.out.println("2 - выполнить задачу A");
             System.out.println("3 - выполнить задачу B");
@@ -440,6 +442,7 @@ public class Menu {
         StringBuffer stringBufferText;
         do {
             System.out.println("_______________________________________________________________");
+            System.out.println("Меню ввода текста");
             System.out.println("1 - ввести текст через консоль");
             System.out.println("2 - прочитать текст из файла");
             System.out.println("3 - прочитать текст из бинарного файла");
@@ -602,6 +605,7 @@ public class Menu {
         int command = -1;
         do {
             System.out.println("_______________________________________________________________");
+            System.out.println("Меню работы с задачами текста");
             System.out.println("1 - вывести условие задачи");
             System.out.println("2 - выполнить задачу");
             System.out.println("3 - вывести текст в консоль");

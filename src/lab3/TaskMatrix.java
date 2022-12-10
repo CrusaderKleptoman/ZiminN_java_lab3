@@ -5,17 +5,17 @@ import java.util.Random;
 public class TaskMatrix {
     private int[][] matrix;
 
-    TaskMatrix()
+    public TaskMatrix()
     {
         this.matrix = new int[1][1];
     }
-    TaskMatrix(int rows, int columns) {this.matrix = new int[rows][columns];}
+    public TaskMatrix(int rows, int columns) {this.matrix = new int[rows][columns];}
 
-    TaskMatrix(TaskMatrix taskMatrix)
+    public TaskMatrix(TaskMatrix taskMatrix)
     {
         this.matrix = copyMatrix(taskMatrix.matrix);
     }
-    TaskMatrix(int[][] matrix) {this.matrix = copyMatrix(matrix);}
+    public TaskMatrix(int[][] matrix) {this.matrix = copyMatrix(matrix);}
 
     public static int[][] copyMatrix(int[][] matrix)
     {
